@@ -9,6 +9,7 @@ class Order():
         self.__listProducts = listProducts
         for product,quantity in self.__listProducts.values():
             self.__pax += product.getPrice()*quantity
+
     def getTable(self):
         return self.__table
 
@@ -24,3 +25,28 @@ class Order():
 
     def getPax(self):
         return self.__pax
+
+    def addNewProduct(self,numProduct,product,quantity):
+        self.__listProducts[numProduct] = [product,quantity]
+        for product,quantity in self.__listProducts.values():
+            self.__pax += product.getPrice()*quantity
+        return True
+
+    def getNumOfProducts(self):
+        num = 0
+        for x in self.__listProducts:
+            num = x
+        return x
+
+    def getNumOfProductByName(self,nameProduct):
+        for numProduct,lista in self.__listProducts.items():
+            product = lista[0]
+            if nameProduct == product.getName():
+                return numProduct
+
+    def removeProductByNum(self,numProduct):
+        self.__listProducts.pop(numProduct)
+        self.__pax = 0
+        for product,quantity in self.__listProducts.values():
+            self.__pax += product.getPrice()*quantity
+        return True

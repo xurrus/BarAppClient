@@ -47,3 +47,15 @@ class ControllerBar():
 
     def getOrders(self):
         return self.__orders
+
+    def getOrderByNum(self,numOrder):
+        return self.__orders[numOrder]
+
+    def changeOrder(self,numOrder,newOrder):
+        self.__orders[numOrder] = newOrder
+        return True
+    
+    def existsOrder(self,numOrder):
+        if numOrder in self.__orders:
+            return True
+        return False
