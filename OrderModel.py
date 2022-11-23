@@ -3,6 +3,7 @@ class Order():
 
     def __init__(self,table,client,waiter,listProducts):
         self.__table = table
+        self.__active = True
         self.__client = client
         self.__pax = 0
         self.__waiter = waiter
@@ -19,9 +20,8 @@ class Order():
     def getWaiter(self):
         return self.__waiter
 
-    def printProducts(self):
-        for product,quantity in self.__listProducts.values():
-            print("\t\tName: ",product.getName(),", quantity: ",quantity)
+    def getProducts(self):
+        return self.__listProducts
 
     def getPax(self):
         return self.__pax
@@ -43,10 +43,31 @@ class Order():
             product = lista[0]
             if nameProduct == product.getName():
                 return numProduct
+        return None
 
     def removeProductByNum(self,numProduct):
-        self.__listProducts.pop(numProduct)
+        lista = self.getListByNumProduct(numProduct)
+        if(lista[1] == 1):
+            self.__listProducts.pop(numProduct)
+        else:
+            lista[1] -= 1
         self.__pax = 0
         for product,quantity in self.__listProducts.values():
             self.__pax += product.getPrice()*quantity
         return True
+
+    def changeQuantityForAProductByName(self,nameProduct,quantity):
+        changed = False
+        for numProduct,lista in self.__listProducts.items():
+            if nameProduct == lista[0].getName():
+                lista[1] = quantity
+                changed = True
+                break
+        self.__pax = 0
+        for product,quantity in self.__listProducts.values():
+            self.__pax += product.getPrice()*quantity
+        return changed
+
+    def getListByNumProduct(self,numProduct):
+        lista =  self.__listProducts[numProduct]
+        return lista
