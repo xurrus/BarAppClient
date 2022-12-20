@@ -1,6 +1,10 @@
 class Category():
     
     def __init__(self,id,name,products):
+        if(id == None):
+            self.__id = 0
+        else:
+            self.__id = id
         self.__id = id
         self.__name = name
         self.__products = products

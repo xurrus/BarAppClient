@@ -71,3 +71,9 @@ class Order():
     def getListByNumProduct(self,numProduct):
         lista =  self.__listProducts[numProduct]
         return lista
+
+    def isActive(self):
+        return self.__active
+
+    def setActive(self,bool):
+        self.__active = bool 

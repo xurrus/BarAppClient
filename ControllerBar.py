@@ -59,3 +59,56 @@ class ControllerBar():
         if numOrder in self.__orders:
             return True
         return False
+
+    #####################################################
+    #################### API METHODS #####################
+    #####################################################
+
+    #GET ONE BY ID 
+    #RETURN ONE OBJECT
+    #PARAM: ID
+    def _getIngredientById(self,id):
+        return api.getIngredientById(id)
+    def _getCategoryById(self,id):
+        return api.getCategoryById(id)
+    def _getProductById(self,id):
+        return api.getProductById(id)
+
+    #GET ALL
+    #RETURN LIST OF OBJECTS LIST[idObject] = OBJECT
+    def _getIngredients(self):
+        return api.getIngredients()
+    def _getProducts(self):
+        return api.getProducts()
+    def _getCategories(self):
+        return api.getCategories()
+
+    #ADD
+    #RETURN TRUE OR FALSE
+    #PARAM: OBJECT WIH ID NONE
+    def _addIngredient(self,ing):
+        return api.addIngredient(ing)
+    def _addCategory(self,cat):
+        return api.addCategory(cat)
+    def _addProduct(self,prod):
+        return api.addProduct(prod)
+
+    #UPDATE
+    #RETURN TRUE OR FALSE
+    #PARAM: OBJECT WITH FULL INFORMATION
+    def _updateIngredient(self,ing):
+        return api.updateIngredient(ing)
+    def _updateCategory(self,cat):
+        return api.updateCategory(cat)
+    def _updateProduct(self,prod):
+        return api.updateProduct(prod)
+
+    #DELETE
+    #RETURN TRUE OR FALSE
+    #PARAM: ID
+    def _deleteIngredient(self,id):
+        return api.deleteIngredient(id)
+    def _deleteCategory(self,id):
+        return api.deleteCategory(id)
+    def _deleteProduct(self,id):
+        return api.deleteProduct(id)

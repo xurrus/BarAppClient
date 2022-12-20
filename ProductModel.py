@@ -1,7 +1,10 @@
 class Product():
 
     def __init__(self,id,name,description,price,category,ingredients):
-        self.__id = id
+        if(id == None):
+            self.__id = 0
+        else:
+            self.__id = id
         self.__name = name
         self.__description = description
         self.__price = price
@@ -31,3 +34,6 @@ class Product():
 
     def setIngredients(self,ing):
         self.__ingredients = ing
+
+    def setDescription(self,d):
+        self.__description = d
