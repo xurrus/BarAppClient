@@ -12,6 +12,9 @@ class Category():
     def getName(self):
         return self.__name
 
+    def setName(self,n):
+        self.__name = n
+
     def setProducts(self,products):
         self.__products = products
 
@@ -25,4 +28,7 @@ class Category():
         return self.__id
 
     def toString(self):
-        return str(self.__id)+" "+str(self.__name)+" "+str(self.__products)
+        message = str(self.__id)+": Name "+str(self.__name)+", Products: "
+        for p in self.__products:
+            message += str(p)+" "
+        return message
