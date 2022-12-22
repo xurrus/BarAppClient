@@ -1,13 +1,12 @@
 from ControllerBar import ControllerBar
 from OrderModel import Order
-#from ApiBar import ApiBar
 
 from IngredientModel import Ingredient
 from CategoryModel import Category
 from ProductModel import Product
 
 controller = ControllerBar()
-#api = ApiBar()
+
 numOrder = 0 #CONTADOR PARA ACADA COMANDA QUE SE CREA EN LA APLICACION
 
 '''METODO PARA ANYADIR PRODUCTOS A UN PEDIDO QUE YA EXISTE
@@ -65,6 +64,31 @@ def addProductsToNewOrder():
         return listProducts
     else:
         return None
+
+def printAllIngredients():
+    allIngredients = controller._getIngredients()
+    print("Ingredients:")
+    for id,ing in allIngredients.items():
+        print("\tID ",id," - ",ing.getName()," Type: ",str(ing.getTypeI()))
+        print()
+
+def printAllCategories():
+    allCategories = controller._getCategories()
+    print("Categories:")
+    for id,cat in allCategories.items():
+        print("\tID ",id," - ",cat.getName())
+        print()
+
+def printAllProducts():
+    allProducts = controller._getProducts()
+    print("Products:")
+    for id,pro in allProducts.items():
+        if pro.getCategory() == False:
+            nameCat = "no category"
+        else:
+            nameCat = pro.getCategory()[1]
+        print("\tID ",id," - ",pro.getName()," Category: ",nameCat,", Price: ",pro.getPrice(),"€")
+        print()
 
 while(True):
     print()
@@ -166,6 +190,7 @@ while(True):
     #CRUD MENU
     elif option == 5:
         while(True):
+            print()
             print("1- INGREDIENTS Management")
             print("2- CATEGORIES Management")
             print("3- PRODUCTS Management")
@@ -178,12 +203,14 @@ while(True):
             #INGREDIENT CRUD
             elif opCRUD == 1:
                 while(True):
+                    print()
                     print("C) Create a new ingredient")
                     print("R) Read ingredients")
                     print("U) Update an ingredient")
                     print("D) Delete an ingredient")
                     print("0) Exit")
                     opI = input("Select an option: ")
+                    print()
 
                     if opI == '0':
                         break
@@ -218,32 +245,33 @@ while(True):
                             print("2- Read all ingredients")
                             print("0- Exit")
                             opRead = int(input("Choose an option:"))
+                            print()
                             if opRead == 1:
                                 idd = input("Enter the ingredient ID:")
                                 ingredient = controller._getIngredientById(idd)
                                 if ingredient == None:
-                                    print("\tThis ingredient doesn't exists")
+                                    print("\tERROR. THIS ID NOT EXISTS")
                                     break
                                 productos = ingredient.getProducts()
-                                message = "\t"+str(ingredient.getId())+": Name: "+str(ingredient.getName())+", Observations: "+str(ingredient.getObservations())+", Products:\n\t"
-                                for p in productos:
-                                    message += str(controller._getProductById(p).getName())+" "
-                                print(message)
+                                if len(productos) > 0:
+                                    message = "\tID - "+str(ingredient.getId())+"\n\tName: "+str(ingredient.getName())+"\n\tObservations: "+str(ingredient.getObservations())+"\n\tProducts:\n\t\t"
+                                    for p in productos:
+                                        message += str(controller._getProductById(p).getName())+" | "
+                                    print(message)
+                                    print()
+                                else:
+                                    message = "\tID - "+str(ingredient.getId())+"\n\tName: "+str(ingredient.getName())+"\n\tObservations: "+str(ingredient.getObservations())+"\n\tNo products"
+                                    print(message)
+                                    print()
 
                             elif opRead == 2:
-                                allIngredients = controller._getIngredients()
-                                print("Ingredients:")
-                                for id,ing in allIngredients.items():
-                                    productos = ing.getProducts()
-                                    message = "\t"+str(ing.getId())+": Name: "+str(ing.getName())+", Observations: "+str(ing.getObservations())+", Products:\n\t"
-                                    for p in productos:
-                                        message += str(controller._getProductById(p).getName())+" "
-                                        print(message)
+                                printAllIngredients()
 
                             elif opRead == 0:
                                 break
 
                     elif opI == 'U':
+                        printAllIngredients()
                         idd = input("Enter the ingredient to update (his ID):")
                         ingredient = controller._getIngredientById(idd)
                         if ingredient == None:
@@ -298,10 +326,7 @@ while(True):
                                     break
 
                     elif opI == 'D':
-                        allIngredients = controller._getIngredients()
-                        print("Ingredients:")
-                        for id,ing in allIngredients.items():
-                            print("\t",id," ",ing.getName())
+                        printAllIngredients()
                         idd = input("Enter the ingredient ID to remove:")
                         ingredient = controller._getIngredientById(idd)
                         if ingredient == None:
@@ -316,12 +341,14 @@ while(True):
             #CATEGORY CRUD
             elif opCRUD == 2:
                 while(True):
+                    print()
                     print("C) Create a new category")
                     print("R) Read categories")
                     print("U) Update a category")
                     print("D) Delete a category")
                     print("0) Exit")
                     opC = input("Select an option: ")
+                    print()
 
                     if opC == '0':
                         break
@@ -355,28 +382,28 @@ while(True):
                                 idd = input("Enter the category ID:")
                                 category = controller._getCategoryById(idd)
                                 if category == None:
-                                    print("\tThis category doesn't exists")
+                                    print("\tTHIS CATEGORY DOESN'T EXISTS")
                                     break
                                 productos = category.getProducts()
-                                message = "\t"+str(category.getId())+": Name: "+str(category.getName())+", Products:\n\t"
-                                for p in productos:
-                                    message += str(controller._getProductById(p).getName())+" "
-                                print(message)
+                                if len(productos) > 0:
+                                    message = "\tID - "+str(category.getId())+"\n\tName: "+str(category.getName())+"\n\tProducts:\n\t\t"
+                                    for p in productos:
+                                        message += str(controller._getProductById(p).getName())+" | "
+                                    print(message)
+                                    print()
+                                else:
+                                    message = "\tID - "+str(category.getId())+"\n\tName: "+str(category.getName())+"\n\tNo products"
+                                    print(message)
+                                    print()
 
                             elif opRead == 2:
-                                allCategories = controller._getCategories()
-                                print("Categories:")
-                                for id,cat in allCategories.items():
-                                    productos = cat.getProducts()
-                                    message = "\t"+str(cat.getId())+": Name: "+str(cat.getName())+", Products:\n\t"
-                                    for p in productos:
-                                        message += str(controller._getProductById(p).getName())+" "
-                                        print(message)
+                                printAllCategories()
 
                             elif opRead == 0:
                                 break
 
                     elif opC == 'U':
+                        printAllCategories()
                         idd = input("Enter the category to update (his ID):")
                         category = controller._getCategoryById(idd)
                         if category == None:
@@ -418,10 +445,7 @@ while(True):
                                     break
                     
                     elif opC == 'D':
-                        allCategories = controller._getCategories()
-                        print("Categories:")
-                        for id,cat in allCategories.items():
-                            print("\t",id," ",cat.getName())
+                        printAllCategories()
                         idd = input("Enter the category ID to remove:")
                         category = controller._getCategoryById(idd)
                         if category == None:
@@ -435,6 +459,7 @@ while(True):
             #PRODUCT CRUD
             elif opCRUD == 3:
                 while(True):
+                    print()
                     print("C) Create a new product")
                     print("R) Read products")
                     print("U) Update a product")
@@ -482,43 +507,49 @@ while(True):
                                 idd = input("Enter the product ID:")
                                 product = controller._getProductById(idd)
                                 if product == None:
-                                    print("\tThis product doesn't exists")
+                                    print("\tTHIS PRODUCT DOESN'T EXISTS")
                                     break
-                                nameCategory = controller._getCategoryById(product.getCategory()[0]).getName()
+                                nameCategory = ""
+                                if product.getCategory() == False:
+                                    nameCategory = "No category"
+                                else:
+                                    nameCategory = product.getCategory()[1]
                                 ingredients = product.getIngredients()
                                 messsage = ""
-                                message = "\t"+str(product.getId())+": Name: "+str(product.getName())+", Description: "+str(product.getDescription())+", Price: "+str(product.getPrice())+", Category: "+str(nameCategory)+", Ingredients:\n\t"
-                                for i in ingredients:
-                                    message += controller._getIngredientById(i).getName()+" "
-                                print(message)
+                                if len(ingredients) <= 0:
+                                    message = "\tID - "+str(product.getId())+"\n\tName: "+str(product.getName())+"\n\tDescription: "+str(product.getDescription())+"\n\tPrice €: "+str(product.getPrice())+"\n\tCategory: "+str(nameCategory)+"\n\tNo ingredients"
+                                    print(message)
+                                    print()
+                                else:
+                                    message = "\tID - "+str(product.getId())+"\n\tName: "+str(product.getName())+"\n\tDescription: "+str(product.getDescription())+"\n\tPrice €: "+str(product.getPrice())+"\n\tCategory: "+str(nameCategory)+"\n\tIngredients:\n\t\t"
+                                    for i in ingredients:
+                                        message += controller._getIngredientById(i).getName()+" | "
+                                    print(message)
+                                    print()
 
                             elif opRead == 2:
-                                message = ""
-                                allProducts = controller._getProducts()
-                                print("Products:")
-                                for id,p in allProducts.items():
-                                    nameCategory = controller._getCategoryById(p.getCategory()[0]).getName()
-                                    ingredients = p.getIngredients()
-                                    message = "\t"+str(p.getId())+": Name: "+str(p.getName())+", Description: "+str(p.getDescription())+", Price: "+str(p.getPrice())+", Category: "+str(nameCategory)+", Ingredients:\n\t"
-                                    for i in ingredients:
-                                        message += str(controller._getIngredientById(i).getName())+" "
-                                    print(message)
+                                printAllProducts()
 
                             elif opRead == 0:
                                 break
 
                     elif opP == 'U':
+                        printAllProducts()
                         idd = input("Enter the product to update (his ID):")
                         product = controller._getProductById(idd)
                         if product == None:
                             print("\tThis product doesn't exists")
                         else:
+                            updatedCategory = False
                             while(True):
                                 print("What param do you want to update?:")
                                 print("1- Name ",product.getName())
                                 print("2- Description ",product.getDescription())
                                 print("3- Price ",product.getPrice())
-                                print("4- Category "+str(product.getCategory()[0])+"-"+str(controller._getCategoryById(product.getCategory()[0]).getName()))
+                                if updatedCategory:
+                                    print("4- Category "+str(product.getCategory())+"-"+str(controller._getCategoryById(product.getCategory()).getName()))
+                                else:
+                                    print("4- Category "+str(product.getCategory()[0])+"-"+str(product.getCategory()[1]))
                                 print("5- Ingredients ",product.getIngredients())
                                 print("6- Update")
                                 print("0- Exit")
@@ -541,8 +572,9 @@ while(True):
                                     for id,cat in allCategories.items():
                                         print("\t",id,"-",cat.getName())
                                     newCatId = int(input("Enter a the new category id: "))
-                                    newCat = controller._getCategoryById(newCatId)
-                                    product.setCategory([newCatId,newCat.getName()])
+                                    #newCat = controller._getCategoryById(newCatId)
+                                    product.setCategory(newCatId)
+                                    updatedCategory = True
 
                                 elif opParam == 5:
                                     print("We have the following ingredients:")
@@ -569,16 +601,13 @@ while(True):
                                     break
                     
                     elif opP == 'D':
-                        allProducts = controller._getProducts()
-                        print("Products:")
-                        for id,p in allProducts.items():
-                            print("\t",id," ",p.getName())
+                        printAllProducts()
                         idd = input("Enter the product ID to remove:")
                         produuct = controller._getProductById(idd)
                         if produuct == None:
                             print("\tError. This product doesn't exists")
                         else:
-                            if controller._deleteproduct(idd):
+                            if controller._deleteProduct(idd):
                                 print("\tProduct removed")
                             else:
                                 print("\tERROR. Not removed")
