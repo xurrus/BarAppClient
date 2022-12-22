@@ -546,10 +546,13 @@ while(True):
                                 print("1- Name ",product.getName())
                                 print("2- Description ",product.getDescription())
                                 print("3- Price ",product.getPrice())
-                                if updatedCategory:
-                                    print("4- Category "+str(product.getCategory())+"-"+str(controller._getCategoryById(product.getCategory()).getName()))
+                                if product.getCategory() == False:
+                                    print("4- Category: Without category")
                                 else:
-                                    print("4- Category "+str(product.getCategory()[0])+"-"+str(product.getCategory()[1]))
+                                    if updatedCategory:
+                                        print("4- Category "+str(product.getCategory())+"-"+str(controller._getCategoryById(product.getCategory()).getName()))
+                                    else:
+                                        print("4- Category "+str(product.getCategory()[0])+"-"+str(product.getCategory()[1]))
                                 print("5- Ingredients ",product.getIngredients())
                                 print("6- Update")
                                 print("0- Exit")
@@ -567,12 +570,11 @@ while(True):
                                     product.setPrice(price)
 
                                 elif opParam == 4:
-                                    print("We have the following categrories:")
+                                    print("We have the following categories:")
                                     allCategories = controller._getCategories()
                                     for id,cat in allCategories.items():
                                         print("\t",id,"-",cat.getName())
                                     newCatId = int(input("Enter a the new category id: "))
-                                    #newCat = controller._getCategoryById(newCatId)
                                     product.setCategory(newCatId)
                                     updatedCategory = True
 
