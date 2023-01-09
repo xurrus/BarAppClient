@@ -1,79 +1,108 @@
 
 class Order():
 
-    def __init__(self,table,client,waiter,listProducts):
+    def __init__(self,id,table,client,active,waiter,price,lines):
+        if id == None:
+            self.__id = 0
+        else:
+            self.__id = id
         self.__table = table
-        self.__active = True
         self.__client = client
-        self.__pax = 0
+        self.__active = active
         self.__waiter = waiter
-        self.__listProducts = listProducts
-        for product,quantity in self.__listProducts.values():
-            self.__pax += product.getPrice()*quantity
+        if price == None:
+            self.__price = None
+        else:
+            self.__price = price
+        if lines == None:
+            self.__lines = None
+        else:
+            self.__lines = lines
+
+    def setId(self,id):
+        self.__id = id
+
+    def getId(self):
+        return self.__id
 
     def getTable(self):
         return self.__table
+    
+    def setTable(self,t):
+        self.__table = t
 
     def getClient(self):
         return self.__client
 
-    def getWaiter(self):
-        return self.__waiter
-
-    def getProducts(self):
-        return self.__listProducts
-
-    def getPax(self):
-        return self.__pax
-
-    def addNewProduct(self,numProduct,product,quantity):
-        self.__listProducts[numProduct] = [product,quantity]
-        for product,quantity in self.__listProducts.values():
-            self.__pax += product.getPrice()*quantity
-        return True
-
-    def getNumOfProducts(self):
-        num = 0
-        for x in self.__listProducts:
-            num = x
-        return x
-
-    def getNumOfProductByName(self,nameProduct):
-        for numProduct,lista in self.__listProducts.items():
-            product = lista[0]
-            if nameProduct == product.getName():
-                return numProduct
-        return None
-
-    def removeProductByNum(self,numProduct):
-        lista = self.getListByNumProduct(numProduct)
-        if(lista[1] == 1):
-            self.__listProducts.pop(numProduct)
-        else:
-            lista[1] -= 1
-        self.__pax = 0
-        for product,quantity in self.__listProducts.values():
-            self.__pax += product.getPrice()*quantity
-        return True
-
-    def changeQuantityForAProductByName(self,nameProduct,quantity):
-        changed = False
-        for numProduct,lista in self.__listProducts.items():
-            if nameProduct == lista[0].getName():
-                lista[1] = quantity
-                changed = True
-                break
-        self.__pax = 0
-        for product,quantity in self.__listProducts.values():
-            self.__pax += product.getPrice()*quantity
-        return changed
-
-    def getListByNumProduct(self,numProduct):
-        lista =  self.__listProducts[numProduct]
-        return lista
+    def setClient(self,c):
+        self.__client = c
 
     def isActive(self):
         return self.__active
 
-    def setActive(self,bool):
-        self.__active = bool 
+    def setActive(self,tf):
+        self.__active = tf
+
+    def getWaiter(self):
+        return self.__waiter
+
+    def setWaiter(self,w):
+        self.__waiter = w
+
+    def getPrice(self):
+        return self.__price
+
+    def setPrice(self,p):
+        self.__price = p
+
+    def getLines(self):
+        return self.__lines
+
+    def setLines(self,l):
+        self.__lines = l
+
+    # def addNewProduct(self,numProduct,product,quantity):
+    #     self.__listProducts[numProduct] = [product,quantity]
+    #     for product,quantity in self.__listProducts.values():
+    #         self.__pax += product.getPrice()*quantity
+    #     return True
+
+    # def getNumOfProducts(self):
+    #     num = 0
+    #     for x in self.__listProducts:
+    #         num = x
+    #     return x
+
+    # def getNumOfProductByName(self,nameProduct):
+    #     for numProduct,lista in self.__listProducts.items():
+    #         product = lista[0]
+    #         if nameProduct == product.getName():
+    #             return numProduct
+    #     return None
+
+    # def removeProductByNum(self,numProduct):
+    #     lista = self.getListByNumProduct(numProduct)
+    #     if(lista[1] == 1):
+    #         self.__listProducts.pop(numProduct)
+    #     else:
+    #         lista[1] -= 1
+    #     self.__pax = 0
+    #     for product,quantity in self.__listProducts.values():
+    #         self.__pax += product.getPrice()*quantity
+    #     return True
+
+    # def changeQuantityForAProductByName(self,nameProduct,quantity):
+    #     changed = False
+    #     for numProduct,lista in self.__listProducts.items():
+    #         if nameProduct == lista[0].getName():
+    #             lista[1] = quantity
+    #             changed = True
+    #             break
+    #     self.__pax = 0
+    #     for product,quantity in self.__listProducts.values():
+    #         self.__pax += product.getPrice()*quantity
+    #     return changed
+
+    # def getListByNumProduct(self,numProduct):
+    #     lista =  self.__listProducts[numProduct]
+    #     return lista

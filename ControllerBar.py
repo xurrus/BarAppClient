@@ -7,25 +7,8 @@ class ControllerBar():
         self.__categories = api.getCategories()
         self.__products = api.getProducts()
         self.__ingredients = api.getIngredients()
-        self.__orders = {}
-
-    def getCategories(self):
-        return self.__categories
-
-    def getProducts(self):
-        return self.__products
-
-    def getIngredients(self):
-        return self.__ingredients
-
-    def getCategoryById(self,id):
-        return self.__categories[id]
-
-    def getProductById(self,id):
-        return self.__products[id]
-
-    def getIngredientById(self,id):
-        return self.__ingredients[id]
+        self.__orders = api.getOrders()
+        self.__lines = api.getLines()
 
     def getNumCategories(self):
         return len(self.__categories)
@@ -35,30 +18,20 @@ class ControllerBar():
 
     def getNumIngredients(self):
         return len(self.__ingredients)
-        
-    def getProductByName(self,name):
-        for idd,prod in self.__products.items():
-            if prod.getName() == name:
-                return prod
-        return None
 
-    def addOrder(self,numOrder,order):
-        self.__orders[numOrder] = order
+    def getNumOrders(self):
+        return len(self.__orders)
 
-    def getOrders(self):
-        return self.__orders
+    def getNumLines(self):
+        return len(self.__lines)
 
-    def getOrderByNum(self,numOrder):
-        return self.__orders[numOrder]
+    def getOrderTableById(self,id):
+        order = self._getOrderById(id)
+        return order.getTable()
 
-    def changeOrder(self,numOrder,newOrder):
-        self.__orders[numOrder] = newOrder
-        return True
-    
-    def existsOrder(self,numOrder):
-        if numOrder in self.__orders:
-            return True
-        return False
+    def getProductNameById(self,id):
+        product = self._getProductById(id)
+        return product.getName()
 
     #####################################################
     #################### API METHODS #####################
@@ -73,6 +46,10 @@ class ControllerBar():
         return api.getCategoryById(id)
     def _getProductById(self,id):
         return api.getProductById(id)
+    def _getOrderById(self,id):
+        return api.getOrderById(id)
+    def _getLineById(self,id):
+        return api.getLineById(id)
 
     #GET ALL
     #RETURN LIST OF OBJECTS LIST[idObject] = OBJECT
@@ -82,6 +59,10 @@ class ControllerBar():
         return api.getProducts()
     def _getCategories(self):
         return api.getCategories()
+    def _getOrders(self):
+        return api.getOrders()
+    def _getLines(self):
+        return api.getLines()
 
     #ADD
     #RETURN TRUE OR FALSE
@@ -92,6 +73,10 @@ class ControllerBar():
         return api.addCategory(cat)
     def _addProduct(self,prod):
         return api.addProduct(prod)
+    def _addOrder(self,order):
+        return api.addOrder(order)
+    def _addLine(self,line):
+        return api.addLine(line)
 
     #UPDATE
     #RETURN TRUE OR FALSE
@@ -102,6 +87,10 @@ class ControllerBar():
         return api.updateCategory(cat)
     def _updateProduct(self,prod):
         return api.updateProduct(prod)
+    def _updateOrder(self,order):
+        return api.updateOrder(order)
+    def _updateLine(self,line):
+        return api.updateLine(line)
 
     #DELETE
     #RETURN TRUE OR FALSE
@@ -112,3 +101,7 @@ class ControllerBar():
         return api.deleteCategory(id)
     def _deleteProduct(self,id):
         return api.deleteProduct(id)
+    def _deleteOrder(self,id):
+        return api.deleteOrder(id)
+    def _deleteLine(self,id):
+        return api.deleteLine(id)

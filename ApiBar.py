@@ -2,7 +2,8 @@ import requests
 from CategoryModel import Category
 from ProductModel import Product
 from IngredientModel import Ingredient
-
+from OrderModel import Order
+from LineModel import Line
 
 class ApiBar():
     #############################################################
@@ -322,6 +323,241 @@ class ApiBar():
     #RETURN BOOLEAN
     def deleteProduct(self,id):
         url = "http://localhost:8069/bar_app/deleteProduct"
+        params = {
+            "id":id
+        }
+        r = requests.delete(url=url,json=params)
+        if (r.status_code == 200):
+            return True
+        else:
+            return False
+
+    #############################################################
+    ####################### ORDER ################################
+    #############################################################
+
+    ##GET ONE ORDER BY ID
+    #PARAM : ID
+    #RETURN ONE ORDER OBJECT
+    def getOrderById(self,id):
+        url = "http://localhost:8069/bar_app/getOrder/"+str(id)
+        response = requests.request("GET", url)
+        if response.status_code == 200:
+            data = response.json()
+        else:
+            print("Error GET")
+            return None
+
+        json = {}
+        json = data["data"]
+        if(len(json) == 0):
+            return None
+        else:
+            for x in json:
+                idd = x["id"]
+                table = x["table"]
+                client = x["client"]
+                active = x["active"]
+                waiter = x["waiter"]
+                price = x["price"]
+                lines = x["lines"]
+                newOrder = Order(idd,table,client,active,waiter,price,lines)
+
+        return newOrder
+
+    ##GET ALL ORDERS
+    #RETURN A LIST OF ORDERS: LIST[ORDER.ID] = ORDER
+    def getOrders(self):
+        url = "http://localhost:8069/bar_app/getOrders"
+        response = requests.request("GET", url)
+        if response.status_code == 200:
+            data = response.json()
+        else:
+            print("Error GET")
+            return None
+
+        json = {}
+        listOrders = {}
+        json = data["data"]
+        
+        for x in json:
+            idd = x["id"]
+            table = x["table"]
+            client = x["client"]
+            active = x["active"]
+            waiter = x["waiter"]
+            price = x["price"]
+            lines = x["lines"]
+            newOrder = Order(idd,table,client,active,waiter,price,lines)
+            listOrders[idd] = newOrder
+
+        return listOrders
+
+    ##POST ONE ORDER    
+    #PARAM: OBJECT ORDER WITH NONE ID
+    # RETURN BOOLEAN
+    def addOrder(self,order):
+        url = "http://localhost:8069/bar_app/addOrder"
+        params = {
+            "table":order.getTable(),
+            "client":order.getClient(),
+            "active":order.isActive(),
+            "waiter":order.getWaiter(),
+            "price":order.getPrice(),
+            "lines":order.getLines()
+        }
+        r = requests.post(url=url,json=params)
+        if (r.status_code == 200):
+            jsonReturned = r.json()
+            if (len(jsonReturned) > 0):
+                jsonId = jsonReturned['result']['id']
+                order.setId(jsonId)
+                return True
+            else:
+                print("Error posting")
+                return False
+        else:
+            print("Error posting")
+            return False
+
+    ##UPDATE ONE ORDER  
+    #PARAM: OBJECT ORDER WITH ALL INFORMATION
+    #RETURN BOOLEAN
+    def updateOrder(self,order):
+        url = "http://localhost:8069/bar_app/updateOrder"
+        params = {
+            "id":order.getId(),
+            "table":order.getTable(),
+            "client":order.getClient(),
+            "active":order.isActive(),
+            "waiter":order.getWaiter(),
+            "price":order.getPrice(),
+            "lines":order.getLines()
+        }
+        r = requests.put(url=url,json=params)
+        if (r.status_code == 200):
+            return True
+        else:
+            return False
+
+    ##DELETE ONE ORDER
+    #PARAM: EXISTING ID
+    #RETURN BOOLEAN
+    def deleteOrder(self,id):
+        url = "http://localhost:8069/bar_app/deleteOrder"
+        params = {
+            "id":id
+        }
+        r = requests.delete(url=url,json=params)
+        if (r.status_code == 200):
+            return True
+        else:
+            return False
+
+
+    #############################################################
+    ####################### LINE ################################
+    #############################################################
+
+    ##GET ONE LINE BY ID
+    #PARAM : ID
+    #RETURN ONE LINE OBJECT
+    def getLineById(self,id):
+        url = "http://localhost:8069/bar_app/getLine/"+str(id)
+        response = requests.request("GET", url)
+        if response.status_code == 200:
+            data = response.json()
+        else:
+            print("Error GET")
+            return None
+
+        json = {}
+        json = data["data"]
+        if(len(json) == 0):
+            return None
+        else:
+            for x in json:
+                idd = x["id"]
+                orderId = x["order_id"][0]
+                productId = x["product_id"][0]
+                quantity = x["quantity"]
+                fullName = x["fullName"]
+                newLine = Line(idd,orderId,productId,quantity,fullName)
+
+        return newLine
+
+    ##GET ALL LINES
+    #RETURN A LIST OF LINES: LIST[LINE.ID] = LINE
+    def getLines(self):
+        url = "http://localhost:8069/bar_app/getLines"
+        response = requests.request("GET", url)
+        if response.status_code == 200:
+            data = response.json()
+        else:
+            print("Error GET")
+            return None
+
+        json = {}
+        listLines = {}
+        json = data["data"]
+        
+        for x in json:
+            idd = x["id"]
+            orderId = x["order_id"][0]
+            productId = x["product_id"][0]
+            quantity = x["quantity"]
+            fullName = x["fullName"]
+            newLine = Line(idd,orderId,productId,quantity,fullName)
+            listLines[idd] = newLine
+
+        return listLines
+
+    ##POST ONE LINE    
+    #PARAM: OBJECT LINE WITH NONE ID AND NO FULL NAME
+    # RETURN BOOLEAN
+    def addLine(self,line):
+        url = "http://localhost:8069/bar_app/addLine"
+        params = {
+            "order_id":line.getOrderId(),
+            "product_id":line.getProductId(),
+            "quantity":line.getQuantity(),
+        }
+        r = requests.post(url=url,json=params)
+        if (r.status_code == 200):
+            jsonReturned = r.json()
+            if (len(jsonReturned) > 0):
+                jsonId = jsonReturned['result']['id']
+                line.setId(jsonId)
+                return True
+            else:
+                print("Error posting")
+                return False
+        else:
+            print("Error posting")
+            return False
+
+    ##UPDATE ONE LINE  
+    #PARAM: OBJECT LINE WITH ALL INFORMATION, WITHOUT FULL NAME
+    #RETURN BOOLEAN
+    def updateLine(self,line):
+        url = "http://localhost:8069/bar_app/updateLine"
+        params = {
+            "id":line.getId(),
+            "order_id":line.getOrderId(),
+            "product_id":line.getProductId(),
+            "quantity":line.getQuantity(),
+        }
+        r = requests.put(url=url,json=params)
+        if (r.status_code == 200):
+            return True
+        else:
+            return False
+
+    ##DELETE ONE LINE
+    #PARAM: EXISTING ID
+    #RETURN BOOLEAN
+    def deleteLine(self,id):
+        url = "http://localhost:8069/bar_app/deleteLine"
         params = {
             "id":id
         }

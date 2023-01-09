@@ -1,82 +1,25 @@
 from ControllerBar import ControllerBar
-from OrderModel import Order
 
+from LineModel import Line
+from OrderModel import Order
 from IngredientModel import Ingredient
 from CategoryModel import Category
 from ProductModel import Product
 
 controller = ControllerBar()
 
-numOrder = 0 #CONTADOR PARA ACADA COMANDA QUE SE CREA EN LA APLICACION
-
-'''METODO PARA ANYADIR PRODUCTOS A UN PEDIDO QUE YA EXISTE
-   LO USAMOS EN LA OPCION 4 DEL MENU'''
-def addProductsToExistingOrder(numProducts,order):
-    while(True):
-        #nameProduct = NOMBRE DE PRODUCTO
-        nameProduct = input("Enter a PRODUCT NAME (END to finish): ")
-        #SI EL nameProduct ES END, SE ACABA EL BUCLE
-        if(nameProduct == "END"):
-            break
-        #product =  OBJETO PRODUCTO CON TAL NOMBRE
-        product = controller.getProductByName(nameProduct)
-        #SI product ESTA VACIO, NO EXISTE
-        if (product == None):
-            print("This product doesn't exist!")
-            break
-        '''AHORA, SI ESE PRODUCTO YA EXISTE EN EL PEDIDO, SU 'ID'
-           SERA SU CORRESPONDIENTE
-           SINO, SERA UN NUMERO MAS DEL ULTIMO ID DE PRODUCTOS
-        '''
-        obtainedNumProduct = order.getNumOfProductByName(product.getName())
-        if(obtainedNumProduct == None):
-            numProducts += 1
-            quantity = int(input("Enter the QUANTITY of the product: "))
-            if (order.addNewProduct(numProducts,product,quantity)) == True:
-                print("New product added")
-            else:
-                print("Product not added")
-        else:
-            quantity = int(input("Enter the new QUANTITY for the product: "))
-            if (order.changeQuantityForAProductByName(product.getName(),quantity)) == True:
-                print("Product updated")
-            else:
-                print("Error. Product not updated")
-
-
-'''METODO PARA ANYADIR PRODUCTOS A UN PEDIDO QUE ESTAMOS CREANDO AHORA
-LO USAMOS EN LA OPCION 2 DEL MENU'''
-def addProductsToNewOrder():
-    listProducts = {}
-    numProduct = 0
-    while(True):
-        pname = input("Enter a PRODUCT NAME (END to finish): ")
-        if(pname == "END"):
-            break
-        product = controller.getProductByName(pname)
-        if (product == None):
-            print("This product doesn't exist!")
-            break
-        numProduct += 1
-        quantity = int(input("Enter the QUANTITY of the product: "))
-        listProducts[numProduct] = [product,quantity]
-    if (len(listProducts)) > 0: 
-        return listProducts
-    else:
-        return None
-
 def printAllIngredients():
     allIngredients = controller._getIngredients()
     print("Ingredients:")
     for id,ing in allIngredients.items():
-        print("\tID ",id," - ",ing.getName()," Type: ",str(ing.getTypeI()))
+        print("\tID ",id," - Name: ",ing.getName(),", Type: ",str(ing.getTypeI()))
         print()
 
 def printAllCategories():
     allCategories = controller._getCategories()
     print("Categories:")
     for id,cat in allCategories.items():
-        print("\tID ",id," - ",cat.getName())
+        print("\tID ",id," - Name: ",cat.getName())
         print()
 
 def printAllProducts():
@@ -87,113 +30,41 @@ def printAllProducts():
             nameCat = "no category"
         else:
             nameCat = pro.getCategory()[1]
-        print("\tID ",id," - ",pro.getName()," Category: ",nameCat,", Price: ",pro.getPrice(),"€")
+        print("\tID ",id," - Name: ",pro.getName(),", Category: ",nameCat,", Price: ",pro.getPrice(),"€")
         print()
+
+def printAllOrders():
+    allOrders =  controller._getOrders()
+    print("Orders:")
+    for id,order in allOrders.items():
+        print("\tID ",id," - Table: ",order.getTable(),", Price: ",order.getPrice(),"€, Active: ",order.isActive())
+
+def printAllLines():
+    allLines =  controller._getLines()
+    print("Lines:")
+    for id,line in allLines.items():
+        print("\tID ",id," - Name: ",line.getFullName(),", Quantity: ",line.getQuantity())
+
 
 while(True):
     print()
-    # print("We have ",controller.getNumCategories()," categories")
-    # print("We have ",controller.getNumProducts()," products")
-    # print("We have ",controller.getNumIngredients()," ingredients")
-    # print()
-    print("1. List menu")
-    print("2. Create order")
-    print("3. List orders")
-    print("4. Change a order")
-    print("0. Exit")
-    print("- - - - - - - - -")
-    print("5- C.R.U.D Menu")
+    print("## ORDERS MANAGEMENT ##")
+    print(" 1. CRUD MENU")
+    print(" 0. Exit")
     option = int(input("Select an option: "))
-
     #EXIT
     if (option == 0):
         print("BYE!")
         break
 
-    #LIST CATEGORIES AND THEIR PRODUCTS
-    elif option == 1:
-        listCategories = controller.getCategories()
-        for idd,cat in listCategories.items():
-            print("Category ",idd)
-            print("\t",cat.getName())
-            print("\t","Products: ")
-            for idProducto in cat.getProducts():
-                producto = controller.getProductById(idProducto)
-                print("\t\t",producto.getName())
-    #CREATE ORDER
-    elif option == 2:
-        table = input("Enter the table num: ")
-        client = input("Enter the client name: ")
-        waiter = input("Enter the waiter name: ")
-        listProducts = addProductsToNewOrder()
-        #listProducts[contadorProducto] = [producto,cantidad]
-        if(listProducts != None):
-            print("Creating the order...")
-            numOrder += 1 #HEMOS CREADO UNA ORDEN; ENTONCES INCREMENTAMOS CONTADOR
-            newOrder = Order(table,client,waiter,listProducts)
-            controller.addOrder(numOrder,newOrder)
-            #orders[numOrder] = newOrder
-            print("Order added!")
-
-    elif option == 3:
-        #OBTENEMOS LOS PEDIDOS I LOS PRODUCTOS DE ESE PEDIDO
-        #orders[numOrder] = newOrder
-        orders = controller.getOrders()
-        for num,order in orders.items():
-            products = order.getProducts() #OBTENEMOS LOS PRODUCTOS DE CADA ORDEN
-            print("Order ",num)
-            print("\tTable ",order.getTable())
-            print("\tClient ",order.getClient())
-            print("\tWaiter ",order.getWaiter())
-            print("\tProducts:")
-            for numProduct,lista in products.items():
-                print("\t\tProduct: ",lista[0].getName(),", Quantity: ",lista[1])
-            print("\tTotal price €: {:.2f}".format(order.getPax()))
-
-    elif option == 4:
-        #OBTENEMOS TODOS LOS PEDIDOS
-        orders = controller.getOrders()
-        #SI NO HAY PEDIDOS, SACAMOS PRINT
-        if (len(orders)) > 0:
-            num = int(input("Enter the order num to change it:"))
-            #COMPROBAMOS SI EL 'ID' DEL PEDIDO EXISTE
-            if controller.existsOrder(num) == False:
-                print("This order num doesn't exists!")
-            else:
-                #OBTENEMOS EL OBJETO PEDIDO SEGUN SU 'ID'
-                order = controller.getOrderByNum(num)
-                print("We have the following products: ")
-                #OBTENEMOS Y MOSTRAMOS PRODUCTOS DE LA ORDEN
-                products = order.getProducts()
-                for product,quantity in products.values():
-                    print("\t\tName: ",product.getName(),", quantity: ",quantity)
-                print("What do you want to change?")
-                print("1- Add product")
-                print("2- Delete product")
-                option = int(input("Select an option: "))
-                if option == 1:
-                    #OBTENEMOS EL ULTIMO NUMERO DE PRODUCTO QUE TENEMOS
-                    numProducts = order.getNumOfProducts()
-                    ''' 
-                    LLAMAMOS AL METODO PARA ANYADIR PRODUCTO 
-                    PASANDOLE :
-                    -> EL NUMERO DE PRODUCTO OBTENIDO
-                    -> LA ORDEN CON LA QUE ESTAMOS TRABAJANDO '''
-                    addProductsToExistingOrder(numProducts,order)
-                elif option == 2:
-                    pname = input("What product do u want to remove?: ")
-                    numProduct = order.getNumOfProductByName(pname)
-                    if (order.removeProductByNum(numProduct) == True):
-                        print("Product removed!")
-        else:
-            print("We don't have any order!")
     #CRUD MENU
-    elif option == 5:
+    elif option == 1:
         while(True):
             print()
             print("1- INGREDIENTS Management")
             print("2- CATEGORIES Management")
             print("3- PRODUCTS Management")
+            print("4- ORDERS & LINES Management")
             print("0- Exit")
             opCRUD = int(input("Select an option: "))
 
@@ -613,6 +484,188 @@ while(True):
                                 print("\tProduct removed")
                             else:
                                 print("\tERROR. Not removed")
-            
 
-    
+            #ORDER CRUD
+            elif opCRUD == 4:
+                while(True):
+                    print()
+                    print("C) Create a new order")
+                    print("R) Read")
+                    print("U) Update a order")
+                    print("D) Delete")
+                    print("0) Exit")
+                    opO = input("Select an option: ")
+
+                    if opO == '0':
+                        break
+                    
+                    elif opO == 'C':
+                        table = input("Table for the new order: ")
+                        client = input("Client: ")
+                        waiter = input("Waiter: ")
+                        newOrder = Order(None,table,client,True,waiter,None,None)
+                        if controller._addOrder(newOrder):
+                            print("\tNew order added with id ",newOrder.getId())
+                        else:
+                            print("\tError. Not added")
+                        print("1) Add lines to this order")
+                        print("0) Exit and continue")
+                        opOC = int(input("What do you want to do now?: "))
+                        if opOC == 1:
+                            while True:
+                                print("1) Create new line")
+                                print("0) Exit and continue")
+                                opOCC = int(input("Select an option: "))
+                                if opOCC == 0:
+                                    break
+                                else:
+                                    #MIENTRAS EL USUARIO QUIERA, VAMOS CREANDO LINEAS PARA ESTA ORDEN
+                                    print("\nWe have the following products:")
+                                    printAllProducts()
+                                    productId = int(input("Enter the product to add to this line: "))
+                                    quantity = int(input("Enter the quantity for this product: "))
+                                    newLine = Line(None,newOrder.getId(),productId,quantity,None)
+                                    if controller._addLine(newLine):
+                                        print("New line added with ID ",newLine.getId())
+                                    else:
+                                        print("Error. Not added")
+
+                    elif opO == 'R':
+                        while(True):
+                            print("1- Read one order by ID")
+                            print("2- Read all orders")
+                            print("-----------------------")
+                            print("3- Read one line by ID")
+                            print("4- Read all lines")
+                            print("0- Exit")
+                            opRead = int(input("Choose an option:"))
+                            if opRead == 1:
+                                idd = input("Enter the order ID:")
+                                order = controller._getOrderById(idd)
+                                if order == None:
+                                    print("\tTHIS ORDER DOESN'T EXISTS")
+                                    break
+                                lines = order.getLines()
+                                messsage = ""
+                                if len(lines) <= 0:
+                                    message = "\tID - "+str(order.getId())+"\n\tTable: "+str(order.getTable())+"\n\tClient: "+str(order.getClient())+"\n\tWaiter: "+str(order.getWaiter())+"\n\tPrice €: "+str(order.getPrice())+"\n\tNo lines"
+                                    print(message)
+                                    print()
+                                else:
+                                    message = "\tID - "+str(order.getId())+"\n\tTable: "+str(order.getTable())+"\n\tClient: "+str(order.getClient())+"\n\tWaiter: "+str(order.getWaiter())+"\n\tPrice €: "+str(order.getPrice())+"\n\tLines:\n\t\t"
+                                    for l in lines:
+                                        message += controller._getLineById(l).getFullName()+" | "
+                                    print(message)
+                                    print()
+
+                            elif opRead == 2:
+                                printAllOrders()
+
+                            elif opRead == 3:
+                                idd = input("Enter the line ID:")
+                                line = controller._getLineById(idd)
+                                if line == None:
+                                    print("\tTHIS LINE DOESN'T EXISTS")
+                                    break
+                                message = "\tID - "+str(line.getId())+"\n\tOrder: "+str(controller.getOrderTableById(line.getOrderId()))+"\n\tClient: "+str(controller.getProductNameById(line.getProductId()))+"\n\tQuantity: "+str(line.getQuantity())+"\n\tFull name: "+str(line.getFullName())
+                                print(message)
+                                print()
+
+                            elif opRead == 4:
+                                printAllLines()
+
+                            elif opRead == 0:
+                                break
+
+                    elif opO == 'U':
+                        printAllOrders()
+                        idd = input("Enter the order to update (his ID):")
+                        order = controller._getOrderById(idd)
+                        if order == None:
+                            print("\tThis order doesn't exists")
+                        else:
+                            while(True):
+                                print("What param do you want to update?:")
+                                print("1- Table ",order.getTable())
+                                print("2- Client ",order.getClient())
+                                print("3- Waiter ",order.getWaiter())
+                                print("4- Lines ",order.getLines())
+                                print("5- Update")
+                                print("0- Exit")
+                                opParam = int(input("Choose a param: "))
+                                if opParam == 1:
+                                    table = input("Enter the new table name: ")
+                                    order.setTable(table)
+                                
+                                elif opParam == 2:
+                                    client = input("Enter the new client: ")
+                                    order.setClient(client)
+
+                                elif opParam == 3:
+                                    waiter = input("Enter the new waiter: ")
+                                    order.setWaiter(waiter)
+
+                                elif opParam == 4:
+                                    print("We have the following lines:")
+                                    lines = controller._getOrderById(idd).getLines()
+                                    for lin in lines:
+                                        print("\t",lin.getFullName())
+                                    idd = int(input("Select a line to update: "))
+                                    lineU = controller._getLineById(idd)
+                                    while True:
+                                        print("What do u want to update?")
+                                        print("1) Product")
+                                        print("2) Quantity")
+                                        print("0) Exit")
+                                        opOU = int(input("Select an option: "))
+                                        if opOU == 1:
+                                            printAllProducts()
+                                            idd = int(input("Enter the new product for this line: "))
+                                            lineU.setProductId(idd)
+                                        elif opOU == 2:
+                                            quantity = int(input("Enter a new quantity for the product: "))
+                                            lineU.setQuantity(quantity)
+                                        elif opOU == 0:
+                                            break
+
+                                elif opParam == 5:
+                                    if controller._updateOrder(order):
+                                        print("\Order updated")
+                                        break
+                                    else:
+                                        print("\tERROR. Not updated")
+
+                                elif opParam == 0:
+                                    break
+                    
+                    elif opO == 'D':
+                        while True:
+                            print("1) Delete an order")
+                            print("2) Delete a line")
+                            print("0) Exit")
+                            opOD = int(input("Select an option: "))
+                            if opOD == 0:
+                                break
+                            elif opOD == 1:
+                                printAllOrders()
+                                idd = input("Enter the order ID to remove:")
+                                orderD = controller._getOrderById(idd)
+                                if orderD == None:
+                                    print("\tError. This order doesn't exists")
+                                else:
+                                    if controller._deleteOrder(idd):
+                                        print("\tOrder removed")
+                                    else:
+                                        print("\tERROR. Not removed")
+
+                            elif opOD == 2:
+                                printAllLines()
+                                idd = input("Enter the line ID to remove:")
+                                lineD = controller._getLineById(idd)
+                                if lineD == None:
+                                    print("\tError. This line doesn't exists")
+                                else:
+                                    if controller._deleteLine(idd):
+                                        print("\tLine removed")
+                                    else:
+                                        print("\tERROR. Not removed")
