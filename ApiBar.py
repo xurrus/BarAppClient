@@ -140,8 +140,13 @@ class ApiBar():
             for x in json:
                 idd = x["id"]
                 name = x["name"]
+                fullName = x["full_name"]
                 products = x["products"]
-                newCategory = Category(idd,name,products)
+                if x["parent_id"] == False:
+                    parentId = x["parent_id"]
+                else:
+                    parentId = x["parent_id"][0]
+                newCategory = Category(idd,name,fullName,products,parentId)
 
             return newCategory
 
@@ -163,8 +168,13 @@ class ApiBar():
         for x in json:
             idd = x["id"]
             name = x["name"]
+            fullName = x["full_name"]
             products = x["products"]
-            newCategory = Category(idd,name,products)
+            if x["parent_id"] == False:
+                parentId = x["parent_id"]
+            else:
+                parentId = x["parent_id"][0]
+            newCategory = Category(idd,name,fullName,products,parentId)
             listCategories[idd] = newCategory
 
         return listCategories
@@ -176,13 +186,16 @@ class ApiBar():
         url = "http://localhost:8069/bar_app/addCategory"
         params = {
             "name":cat.getName(),
-            "products":cat.getProducts()
+            "products":cat.getProducts(),
+            "parent_id":cat.getParentId()
         }
         r = requests.post(url=url,json=params)
         if (r.status_code == 200):
             jsonReturned = r.json()
             jsonId = jsonReturned['result']['id']
+            fullName = jsonReturned['result']['full_name']
             cat.setId(jsonId)
+            cat.setFullName(fullName)
             return True
         else:
             print("Error posting")
@@ -196,10 +209,14 @@ class ApiBar():
         params = {
             "id":cat.getId(),
             "name":cat.getName(),
-            "products":cat.getProducts()
+            "products":cat.getProducts(),
+            "parent_id":cat.getParentId()
         }
         r = requests.put(url=url,json=params)
         if (r.status_code == 200):
+            jsonReturned = r.json()
+            fullName = jsonReturned['result']['full_name']
+            cat.setFullName(fullName)
             return True
         else:
             return False

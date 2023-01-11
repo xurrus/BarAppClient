@@ -9,20 +9,21 @@ from ProductModel import Product
 controller = ControllerBar()
 
 def printAllIngredients():
+    print()
     allIngredients = controller._getIngredients()
     print("Ingredients:")
     for id,ing in allIngredients.items():
         print("\tID ",id," - Name: ",ing.getName(),", Type: ",str(ing.getTypeI()))
-        print()
 
 def printAllCategories():
+    print()
     allCategories = controller._getCategories()
     print("Categories:")
     for id,cat in allCategories.items():
-        print("\tID ",id," - Name: ",cat.getName())
-        print()
+        print("\tID ",id," - Full name: ",cat.getFullName())
 
 def printAllProducts():
+    print()
     allProducts = controller._getProducts()
     print("Products:")
     for id,pro in allProducts.items():
@@ -31,15 +32,16 @@ def printAllProducts():
         else:
             nameCat = pro.getCategory()[1]
         print("\tID ",id," - Name: ",pro.getName(),", Category: ",nameCat,", Price: ",pro.getPrice(),"€")
-        print()
 
 def printAllOrders():
+    print()
     allOrders =  controller._getOrders()
     print("Orders:")
     for id,order in allOrders.items():
         print("\tID ",id," - Table: ",order.getTable(),", Price: ",order.getPrice(),"€, Active: ",order.isActive())
 
 def printAllLines():
+    print()
     allLines =  controller._getLines()
     print("Lines:")
     for id,line in allLines.items():
@@ -93,10 +95,7 @@ while(True):
                         print("Herbs and spices | Meat | Fish | Pasta | Others")
                         typeI = input("Choose the type for the new ingredient: ")
                         observations = input("Observations: ")
-                        print("We have the following products:")
-                        allProducts = controller._getProducts()
-                        for id,prod in allProducts.items():
-                            print(id,"-",prod.getName())
+                        printAllProducts()
                         prodIds = []
                         while(True):
                             prodId = int(input("Enter the ID of the product that contains this ingredient (0 to end):"))
@@ -127,7 +126,7 @@ while(True):
                                 if len(productos) > 0:
                                     message = "\tID - "+str(ingredient.getId())+"\n\tName: "+str(ingredient.getName())+"\n\tObservations: "+str(ingredient.getObservations())+"\n\tProducts:\n\t\t"
                                     for p in productos:
-                                        message += str(controller._getProductById(p).getName())+" | "
+                                        message += str(controller._getProductById(p).getName())+"\n\t\t"
                                     print(message)
                                     print()
                                 else:
@@ -150,10 +149,10 @@ while(True):
                         else:
                             while(True):
                                 print("What param do you want to update?:")
-                                print("1- Name ",ingredient.getName())
-                                print("2- TypeI ",ingredient.getTypeI())
-                                print("3- Observations ",ingredient.getObservations())
-                                print("4- Products ",ingredient.getProducts())
+                                print("1- Name: ",ingredient.getName())
+                                print("2- TypeI: ",ingredient.getTypeI())
+                                print("3- Observations: ",ingredient.getObservations())
+                                print("4- Products: ",ingredient.getProducts())
                                 print("5- Update")
                                 print("0- Exit")
                                 opParam = int(input("Choose a param: "))
@@ -173,10 +172,7 @@ while(True):
                                     ingredient.setObservatons(observations)
                                 
                                 elif opParam == 4:
-                                    print("We have the following products:")
-                                    allProducts = controller._getProducts()
-                                    for id,prod in allProducts.items():
-                                        print("\t",id,"-",prod.getName())
+                                    printAllProducts()
                                     prodIds = []
                                     while(True):
                                         prodId = int(input("Enter the ID of the product that contains this ingredient (0 to end):"))
@@ -226,10 +222,7 @@ while(True):
                     
                     elif opC == 'C':
                         name = input("Name for the new category: ")
-                        print("We have the following products:")
-                        allProducts = controller._getProducts()
-                        for id,prod in allProducts.items():
-                            print("\t",id,"-",prod.getName())
+                        printAllProducts()
                         prodIds = []
                         while(True):
                             prodId = int(input("Enter the ID of the product belonging to this category (0 to end):"))
@@ -237,9 +230,13 @@ while(True):
                                 break
                             else:
                                 prodIds.append(prodId)
-                        newCategory = Category(None,name,prodIds)
+                        printAllCategories()
+                        parentId = int(input("If this new category is a child of another, enter its parent's ID (0 if not): "))
+                        if parentId == 0:
+                            parentId = False
+                        newCategory = Category(None,name,None,prodIds,parentId)
                         if controller._addCategory(newCategory):
-                            print("\tNew category added with id ",newCategory.getId())
+                            print("\tNew category ",newCategory.getFullName() ," added with id ",newCategory.getId())
                         else:
                             print("\tError. Not added")
 
@@ -256,14 +253,23 @@ while(True):
                                     print("\tTHIS CATEGORY DOESN'T EXISTS")
                                     break
                                 productos = category.getProducts()
+                                father = category.getParentId()
+                                #SI TIENE PRODUCTOS
                                 if len(productos) > 0:
-                                    message = "\tID - "+str(category.getId())+"\n\tName: "+str(category.getName())+"\n\tProducts:\n\t\t"
+                                    if father == False:
+                                        message = "\tID - "+str(category.getId())+"\n\tFull name: "+str(category.getFullName())+"\n\tCategory father: No one"+"\n\tProducts:\n\t\t"
+                                    else:
+                                        message = "\tID - "+str(category.getId())+"\n\tFull name: "+str(category.getFullName())+"\n\tCategory father: "+controller._getCategoryById(category.getParentId()).getFullName()+"\n\tProducts:\n\t\t"
                                     for p in productos:
-                                        message += str(controller._getProductById(p).getName())+" | "
+                                        message += str(controller._getProductById(p).getName())+"\n\t\t"
                                     print(message)
                                     print()
+                                #SI NO TIENE PRODUCTOS
                                 else:
-                                    message = "\tID - "+str(category.getId())+"\n\tName: "+str(category.getName())+"\n\tNo products"
+                                    if father == False:
+                                        message = "\tID - "+str(category.getId())+"\n\tFull name: "+str(category.getFullName())+"\n\tCategory father: No one"+"\n\tNo products"
+                                    else:
+                                        message = "\tID - "+str(category.getId())+"\n\tFull name: "+str(category.getFullName())+"\n\tCategory father: "+controller._getCategoryById(category.getParentId()).getFullName()+"\n\tNo products"
                                     print(message)
                                     print()
 
@@ -282,9 +288,13 @@ while(True):
                         else:
                             while(True):
                                 print("What param do you want to update?:")
-                                print("1- Name ",category.getName())
-                                print("2- Products ",category.getProducts())
-                                print("3- Update")
+                                print("1- Name: ",category.getName())
+                                print("2- Products: ",category.getProducts())
+                                if category.getParentId() == False:
+                                    print("3- Category father: No one")
+                                else:
+                                    print("3- Category father: ",controller._getCategoryById(category.getParentId()).getFullName())
+                                print("4- Update")
                                 print("0- Exit")
                                 opParam = int(input("Choose a param: "))
                                 if opParam == 1:
@@ -292,10 +302,7 @@ while(True):
                                     category.setName(name)
                                 
                                 elif opParam == 2:
-                                    print("We have the following products:")
-                                    allProducts = controller._getProducts()
-                                    for id,prod in allProducts.items():
-                                        print("\t",id,"-",prod.getName())
+                                    printAllProducts()
                                     prodIds = []
                                     while(True):
                                         prodId = int(input("Enter the ID of the product inside this category (0 to end):"))
@@ -305,7 +312,15 @@ while(True):
                                             prodIds.append(prodId)
                                     category.setProducts(prodIds)
 
+
                                 elif opParam == 3:
+                                    printAllCategories()
+                                    parentId = int(input("If this new category is a child of another, enter its parent's ID (0 if not): "))
+                                    if parentId == 0:
+                                        parentId = False
+                                    category.setParentId(parentId)
+
+                                elif opParam == 4:
                                     if controller._updateCategory(category):
                                         print("\tCategory updated")
                                         break
@@ -345,15 +360,9 @@ while(True):
                         name = input("Name for the new product: ")
                         price = float(input("Price €: "))
                         description = input("Description: ")
-                        print("We have the following categories:")
-                        allCategories = controller._getCategories()
-                        for id,cat in allCategories.items():
-                            print("\t",id,"-",cat.getName())
-                        catId = int(input("Enter the ID of the father category for this product: "))
-                        print("We have the following ingredients")
-                        allIngredients = controller._getIngredients()
-                        for id,ing in allIngredients.items():
-                            print("\t",id,"-",ing.getName())
+                        printAllCategories()
+                        catId = int(input("Enter the ID of the category for this product: "))
+                        printAllIngredients()
                         ingIds = []
                         while(True):
                             ingId = int(input("Enter the ID of the ingredient that makes up this product (0 to end):"))
