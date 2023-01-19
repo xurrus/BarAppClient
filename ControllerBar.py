@@ -105,3 +105,7 @@ class ControllerBar():
         return api.deleteOrder(id)
     def _deleteLine(self,id):
         return api.deleteLine(id)
+
+
+    def _confirmOrder(self,order):
+        return api.confirmOrder(order)

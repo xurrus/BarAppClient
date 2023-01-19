@@ -38,7 +38,7 @@ def printAllOrders():
     allOrders =  controller._getOrders()
     print("Orders:")
     for id,order in allOrders.items():
-        print("\tID ",id," - Table: ",order.getTable(),", Price: ",order.getPrice(),"€, Active: ",order.isActive())
+        print("\tID ",id," - Table: ",order.getTable(),", Price: ",order.getPrice(),"€, State: ",order.getState())
 
 def printAllLines():
     print()
@@ -502,6 +502,7 @@ while(True):
                     print("R) Read")
                     print("U) Update a order")
                     print("D) Delete")
+                    print("I) Confirm an order and invoice it")
                     print("0) Exit")
                     opO = input("Select an option: ")
 
@@ -512,7 +513,7 @@ while(True):
                         table = input("Table for the new order: ")
                         client = input("Client: ")
                         waiter = input("Waiter: ")
-                        newOrder = Order(None,table,client,True,waiter,None,None)
+                        newOrder = Order(None,table,client,'A',waiter,None,None)
                         if controller._addOrder(newOrder):
                             print("\tNew order added with id ",newOrder.getId())
                         else:
@@ -535,7 +536,7 @@ while(True):
                                     quantity = int(input("Enter the quantity for this product: "))
                                     newLine = Line(None,newOrder.getId(),productId,quantity,None)
                                     if controller._addLine(newLine):
-                                        print("New line added with ID ",newLine.getId())
+                                        print("New line added with ID ",newLine.getId()," and name",newLine.getFullName())
                                     else:
                                         print("Error. Not added")
 
@@ -557,11 +558,11 @@ while(True):
                                 lines = order.getLines()
                                 messsage = ""
                                 if len(lines) <= 0:
-                                    message = "\tID - "+str(order.getId())+"\n\tTable: "+str(order.getTable())+"\n\tClient: "+str(order.getClient())+"\n\tWaiter: "+str(order.getWaiter())+"\n\tPrice €: "+str(order.getPrice())+"\n\tNo lines"
+                                    message = "\tID - "+str(order.getId())+"\n\tTable: "+str(order.getTable())+"\n\tClient: "+str(order.getClient())+"\n\State: "+str(order.getState())+"\n\tWaiter: "+str(order.getWaiter())+"\n\tPrice €: "+str(order.getPrice())+"\n\tNo lines"
                                     print(message)
                                     print()
                                 else:
-                                    message = "\tID - "+str(order.getId())+"\n\tTable: "+str(order.getTable())+"\n\tClient: "+str(order.getClient())+"\n\tWaiter: "+str(order.getWaiter())+"\n\tPrice €: "+str(order.getPrice())+"\n\tLines:\n\t\t"
+                                    message = "\tID - "+str(order.getId())+"\n\tTable: "+str(order.getTable())+"\n\tClient: "+str(order.getClient())+"\n\State: "+str(order.getState())+"\n\tWaiter: "+str(order.getWaiter())+"\n\tPrice €: "+str(order.getPrice())+"\n\tLines:\n\t\t"
                                     for l in lines:
                                         message += controller._getLineById(l).getFullName()+" | "
                                     print(message)
@@ -678,3 +679,24 @@ while(True):
                                         print("\tLine removed")
                                     else:
                                         print("\tERROR. Not removed")
+
+                    elif opO == 'I':
+                        printAllOrders()
+                        idd = input("Enter the order to update (his ID):")
+                        order = controller._getOrderById(idd)
+                        if order == None:
+                            print("\tThis order doesn't exists")
+                        else:
+                            if order.getState() == 'A':
+                                print("Order state: ",order.getState())
+                                confirm = int(input("CONFIRM ORDER? (1-YES | 0-NO)"))
+                                if confirm == 1:
+                                    if controller._confirmOrder(order):
+                                        print("Order confirmed (state:",order.getState(),")")
+                                    else:
+                                        print("Error. Not confirmed")
+                                elif confirm == 0:
+                                    break
+
+                            else:
+                                print("You can't finish this order, is already confirmed")

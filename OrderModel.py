@@ -1,14 +1,14 @@
 
 class Order():
 
-    def __init__(self,id,table,client,active,waiter,price,lines):
+    def __init__(self,id,table,client,state,waiter,price,lines):
         if id == None:
             self.__id = 0
         else:
             self.__id = id
         self.__table = table
         self.__client = client
-        self.__active = active
+        self.__state = state
         self.__waiter = waiter
         if price == None:
             self.__price = None
@@ -37,11 +37,11 @@ class Order():
     def setClient(self,c):
         self.__client = c
 
-    def isActive(self):
-        return self.__active
+    def getState(self):
+        return self.__state
 
-    def setActive(self,tf):
-        self.__active = tf
+    def setState(self,st):
+        self.__state = st
 
     def getWaiter(self):
         return self.__waiter
@@ -61,6 +61,10 @@ class Order():
     def setLines(self,l):
         self.__lines = l
 
+
+    '''
+    METHODS FOR OLD ORDER (LOCAL ORDER)
+    '''
     # def addNewProduct(self,numProduct,product,quantity):
     #     self.__listProducts[numProduct] = [product,quantity]
     #     for product,quantity in self.__listProducts.values():

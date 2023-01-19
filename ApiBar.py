@@ -374,11 +374,11 @@ class ApiBar():
                 idd = x["id"]
                 table = x["table"]
                 client = x["client"]
-                active = x["active"]
+                state = x["state"]
                 waiter = x["waiter"]
                 price = x["price"]
                 lines = x["lines"]
-                newOrder = Order(idd,table,client,active,waiter,price,lines)
+                newOrder = Order(idd,table,client,state,waiter,price,lines)
 
         return newOrder
 
@@ -401,11 +401,11 @@ class ApiBar():
             idd = x["id"]
             table = x["table"]
             client = x["client"]
-            active = x["active"]
+            state = x["state"]
             waiter = x["waiter"]
             price = x["price"]
             lines = x["lines"]
-            newOrder = Order(idd,table,client,active,waiter,price,lines)
+            newOrder = Order(idd,table,client,state,waiter,price,lines)
             listOrders[idd] = newOrder
 
         return listOrders
@@ -418,7 +418,7 @@ class ApiBar():
         params = {
             "table":order.getTable(),
             "client":order.getClient(),
-            "active":order.isActive(),
+            "state":order.getState(),
             "waiter":order.getWaiter(),
             "price":order.getPrice(),
             "lines":order.getLines()
@@ -446,7 +446,7 @@ class ApiBar():
             "id":order.getId(),
             "table":order.getTable(),
             "client":order.getClient(),
-            "active":order.isActive(),
+            "state":order.getState(),
             "waiter":order.getWaiter(),
             "price":order.getPrice(),
             "lines":order.getLines()
@@ -473,7 +473,7 @@ class ApiBar():
 
 
     #############################################################
-    ####################### LINE ################################
+    ####################### LINE ORDER ##########################
     #############################################################
 
     ##GET ONE LINE BY ID
@@ -544,7 +544,9 @@ class ApiBar():
             jsonReturned = r.json()
             if (len(jsonReturned) > 0):
                 jsonId = jsonReturned['result']['id']
+                newFullName = jsonReturned['result']['full_name']
                 line.setId(jsonId)
+                line.setFullName(newFullName)
                 return True
             else:
                 print("Error posting")
@@ -566,6 +568,9 @@ class ApiBar():
         }
         r = requests.put(url=url,json=params)
         if (r.status_code == 200):
+            jsonreturned = r.json()
+            newFullName = jsonreturned['result']['full_name']
+            line.setFullName(newFullName)
             return True
         else:
             return False
@@ -583,3 +588,20 @@ class ApiBar():
             return True
         else:
             return False
+
+    #############################################################
+    ########## CONFIRM ORDER AND GENERATE INVOICE ###############
+    #############################################################
+
+    def confirmOrder(self,order):
+        url = "http://localhost:8069/bar_app/confirmOrder/"+str(order.getId())
+        response = requests.request("GET",url)
+        if response.status_code == 200:
+            data = response.json()
+        else:
+            print("ERROR CONFIRMING")
+            return None
+
+        state = data['stateOrder']
+        order.setState(state)
+        return True
