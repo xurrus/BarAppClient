@@ -534,7 +534,8 @@ while(True):
                                     printAllProducts()
                                     productId = int(input("Enter the product to add to this line: "))
                                     quantity = int(input("Enter the quantity for this product: "))
-                                    newLine = Line(None,newOrder.getId(),productId,quantity,None)
+                                    observations = input("Observations: ")
+                                    newLine = Line(None,newOrder.getId(),productId,quantity,None,observations)
                                     if controller._addLine(newLine):
                                         print("New line added with ID ",newLine.getId()," and name",newLine.getFullName())
                                     else:
@@ -564,7 +565,7 @@ while(True):
                                 else:
                                     message = "\tID - "+str(order.getId())+"\n\tTable: "+str(order.getTable())+"\n\tClient: "+str(order.getClient())+"\n\State: "+str(order.getState())+"\n\tWaiter: "+str(order.getWaiter())+"\n\tPrice €: "+str(order.getPrice())+"\n\tLines:\n\t\t"
                                     for l in lines:
-                                        message += controller._getLineById(l).getFullName()+" | "
+                                        message += controller._getLineById(l).getFullName()+" (Observations: ",l.getObservations(),") | "
                                     print(message)
                                     print()
 
@@ -577,7 +578,7 @@ while(True):
                                 if line == None:
                                     print("\tTHIS LINE DOESN'T EXISTS")
                                     break
-                                message = "\tID - "+str(line.getId())+"\n\tOrder: "+str(controller.getOrderTableById(line.getOrderId()))+"\n\tClient: "+str(controller.getProductNameById(line.getProductId()))+"\n\tQuantity: "+str(line.getQuantity())+"\n\tFull name: "+str(line.getFullName())
+                                message = "\tID - "+str(line.getId())+"\n\tOrder: "+str(controller.getOrderTableById(line.getOrderId()))+"\n\tClient: "+str(controller.getProductNameById(line.getProductId()))+"\n\tQuantity: "+str(line.getQuantity())+"\n\tFull name: "+str(line.getFullName())+"\n\tObservations: "+str(line.getObservations())
                                 print(message)
                                 print()
 
@@ -619,13 +620,15 @@ while(True):
                                     print("We have the following lines:")
                                     lines = controller._getOrderById(idd).getLines()
                                     for lin in lines:
-                                        print("\t",lin.getFullName())
+                                        linea = controller._getLineById(lin)
+                                        print("\tID ",linea.getId()," - Name: ",linea.getFullName())
                                     idd = int(input("Select a line to update: "))
                                     lineU = controller._getLineById(idd)
                                     while True:
                                         print("What do u want to update?")
-                                        print("1) Product")
-                                        print("2) Quantity")
+                                        print("1) Product (",controller.getProductNameById(lineU.getProductId()),")")
+                                        print("2) Quantity (",lineU.getQuantity(),")")
+                                        print("3) Observations (",lineU.getObservations(),")")
                                         print("0) Exit")
                                         opOU = int(input("Select an option: "))
                                         if opOU == 1:
@@ -635,12 +638,15 @@ while(True):
                                         elif opOU == 2:
                                             quantity = int(input("Enter a new quantity for the product: "))
                                             lineU.setQuantity(quantity)
+                                        elif opOU == 3:
+                                            observations = input("Observations for this line: ")
+                                            lineU.setObservations(observations)
                                         elif opOU == 0:
                                             break
 
                                 elif opParam == 5:
                                     if controller._updateOrder(order):
-                                        print("\Order updated")
+                                        print("\tOrder updated")
                                         break
                                     else:
                                         print("\tERROR. Not updated")

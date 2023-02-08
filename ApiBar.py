@@ -497,9 +497,10 @@ class ApiBar():
                 idd = x["id"]
                 orderId = x["order_id"][0]
                 productId = x["product_id"][0]
-                quantity = x["quantity"]
+                quantity = x["quantity"] 
                 fullName = x["fullName"]
-                newLine = Line(idd,orderId,productId,quantity,fullName)
+                observations = x["observations"]
+                newLine = Line(idd,orderId,productId,quantity,fullName,observations)
 
         return newLine
 
@@ -524,7 +525,8 @@ class ApiBar():
             productId = x["product_id"][0]
             quantity = x["quantity"]
             fullName = x["fullName"]
-            newLine = Line(idd,orderId,productId,quantity,fullName)
+            observations = x["observations"]
+            newLine = Line(idd,orderId,productId,quantity,fullName,observations)
             listLines[idd] = newLine
 
         return listLines
@@ -538,6 +540,7 @@ class ApiBar():
             "order_id":line.getOrderId(),
             "product_id":line.getProductId(),
             "quantity":line.getQuantity(),
+            "observations":line.getObservations()
         }
         r = requests.post(url=url,json=params)
         if (r.status_code == 200):
@@ -565,6 +568,7 @@ class ApiBar():
             "order_id":line.getOrderId(),
             "product_id":line.getProductId(),
             "quantity":line.getQuantity(),
+            "observations":line.getObservations()
         }
         r = requests.put(url=url,json=params)
         if (r.status_code == 200):
