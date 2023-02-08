@@ -642,6 +642,8 @@ while(True):
                                             observations = input("Observations for this line: ")
                                             lineU.setObservations(observations)
                                         elif opOU == 0:
+                                            controller._updateLine(lineU)
+                                            print("Line modified")
                                             break
 
                                 elif opParam == 5:
